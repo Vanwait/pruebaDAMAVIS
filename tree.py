@@ -3,29 +3,33 @@ from game import Game
 
 class Tree:
 
-    def __init__(self, game: Game, maxDepth: int = 10) -> None:
-        self.root = Node([], [(0, 0), (0, 1), (0, 2)], 0, -1)
+    def __init__(self, game: Game, maxDepth: int = 20) -> None:
+        self.root = Node([], [(0, 0), (0, 1), (0, 2)], 0, -1, 0)
         self.game = game
         self.maxDepth = maxDepth
         self.minDepth = -1
         self.creationRecursive(self.root, 1)
-        self.recorridoPreorden(self.root)
+        
+        if self.minDepth == -1:
+            print(f"No hay solución -> {-1}")
+        else:
+            self.recorridoPreorden(self.root)
         
 
     def creationRecursive(self, node: Node, depth: int):
         if depth <= self.maxDepth: 
             if not self.game.isWin(node.rectangle):
                 for type in range(5):
-                    rectangleM = self.rectangleMove(type, node.rectangle.copy())
+                    rectangleM, rotation = self.rectangleMove(type, node.rectangle.copy(), node.rotation)
                     if rectangleM != -1 and self.goodMove(node.move, type):
-                        child = Node([], rectangleM, depth + 1, type)
+                        child = Node([], rectangleM, depth + 1, type, rotation)
                         self.creationRecursive(child, depth + 1)
                         node.childs.append(child)
             else:
                 self.minDepth = depth
 
 
-    def rectangleMove(self, type: int, rectangle: list):
+    def rectangleMove(self, type: int, rectangle: list, rotation: int):
         newRectangle = []
         if type == 0:
             #Move up
@@ -49,11 +53,16 @@ class Tree:
                 
         else:
             #Change Orientation
-            newRectangle = [(rectangle[0][1], rectangle[0][0]), rectangle[1], (rectangle[2][1], rectangle[2][0])]
+            if rotation == 0:
+                newRectangle = [(rectangle[0][0] - 1, rectangle[0][1] + 1), rectangle[1], (rectangle[2][0] + 1, rectangle[2][1] - 1)]
+            else:
+                newRectangle = [(rectangle[0][0] + 1, rectangle[0][1] - 1), rectangle[1], (rectangle[2][0] - 1, rectangle[2][1] + 1)]
+
+            rotation = (rotation + 1) % 2
 
         if self.game.correctPlay(newRectangle):
-            return newRectangle
-        return -1
+            return newRectangle, rotation
+        return -1, rotation
     
 
     #Esta función sirve para quitar movimiento innecesarios. Por ejemplo, si el turno anterior se movió a la derecha, hacemos
@@ -72,9 +81,11 @@ class Tree:
         return True
     
     
-    def recorridoPreorden(self, nodo: Node):
-        nodo.show()
-        if self.game.isWin(nodo.rectangle):
+    def recorridoPreorden(self, nodo: Node): 
+        
+        if self.game.isWin(nodo.rectangle) and nodo.depth == self.minDepth:
+            nodo.show()
+            print(nodo)
             print("ES VICTORIA!!!")
             input("VICTORY")
 

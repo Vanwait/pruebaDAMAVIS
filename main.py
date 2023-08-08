@@ -2,8 +2,6 @@ from tree import Tree
 from game import Game
 
 
-
-
 if __name__ == "__main__":
     labyrinth = [[".", ".", ".", ".", ".", ".", ".", ".", "."],
                  ["#", ".", ".", ".", "#", ".", ".", ".", "."],
@@ -12,9 +10,10 @@ if __name__ == "__main__":
                  [".", "#", ".", ".", ".", ".", ".", "#", "."]
                  ]
     
-game = Game(labyrinth)
-for row in labyrinth:
-    print(row)
-print("--------------------------------")
-tree = Tree(game)
+    game = Game(labyrinth)
+    for row in labyrinth:
+        print(row)
+    print("--------------------------------")
+    tree = Tree(game)
+    
     
