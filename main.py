@@ -44,21 +44,6 @@ def typeLabyrinth(type: int):
     return labyrinth
 
 
-def guardar():
-    for type in range(4):
-        print(f"------------- Test {type + 1} -------------")
-        labyrinth = typeLabyrinth(type)
-        game = Game(labyrinth)
-        for row in labyrinth:
-            print(row)
-        print("--------------------------------")
-        tree = Tree(game)
-        del(tree)
-        del(game)
-        print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-
-
-
 if __name__ == "__main__":
     for type in range(4):
         with open(f"resultados_Test{type + 1}.txt", 'w', encoding='UTF-8') as f:

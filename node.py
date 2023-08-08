@@ -10,7 +10,7 @@ class Node:
         self.rotation = rotation # 0 horizontal, 1 vertical
         self.lab = lab
 
-
+    # Hace un print de la información de los nodos, esta función ya no es ñutil, me ha servido durante el desarrollo
     def show(self) -> str:
         labyrinth = copy.deepcopy(self.lab)
         for coord in self.rectangle:

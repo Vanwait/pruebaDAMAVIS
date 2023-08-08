@@ -1,9 +1,6 @@
 from node import Node
 from game import Game
 
-class DetenerRecursion(Exception):
-    pass
-
 class Tree:
 
     def __init__(self, game: Game, maxDepth: int = 16) -> None:
