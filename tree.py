@@ -1,34 +1,36 @@
 from node import Node
 from game import Game
 
+class DetenerRecursion(Exception):
+    pass
+
 class Tree:
 
-    def __init__(self, game: Game, maxDepth: int = 20) -> None:
-        self.root = Node([], [(0, 0), (0, 1), (0, 2)], 0, -1, 0)
+    def __init__(self, game: Game, maxDepth: int = 16) -> None:
         self.game = game
+        self.root = Node([], [(0, 0), (0, 1), (0, 2)], 0, -1, 0, self.game.labyrinth)
         self.maxDepth = maxDepth
-        self.minDepth = -1
-        self.creationRecursive(self.root, 1)
+        self.minDepth = 10000
+        self.stop = False
+        self.creationRecursive(self.root, 0)
         
-        if self.minDepth == -1:
-            print(f"No hay solución -> {-1}")
-        else:
-            self.recorridoPreorden(self.root)
-        
-
+    # Este método es la creación recursiva del árbol.
     def creationRecursive(self, node: Node, depth: int):
         if depth <= self.maxDepth: 
             if not self.game.isWin(node.rectangle):
                 for type in range(5):
                     rectangleM, rotation = self.rectangleMove(type, node.rectangle.copy(), node.rotation)
                     if rectangleM != -1 and self.goodMove(node.move, type):
-                        child = Node([], rectangleM, depth + 1, type, rotation)
+                        child = Node([], rectangleM, depth + 1, type, rotation, self.game.labyrinth)
                         self.creationRecursive(child, depth + 1)
                         node.childs.append(child)
             else:
-                self.minDepth = depth
+                if depth < self.minDepth:
+                    self.minDepth = depth
 
 
+    # Se calculan las nuevas posibles posiciones del rectángulo. Luego, se comprueba si es posición es o no valida. En caso de serlo, devuelve la nueva posición
+    # en caso contrario, devuelve -1
     def rectangleMove(self, type: int, rectangle: list, rotation: int):
         newRectangle = []
         if type == 0:
@@ -81,16 +83,17 @@ class Tree:
         return True
     
     
-    def recorridoPreorden(self, nodo: Node): 
-        
-        if self.game.isWin(nodo.rectangle) and nodo.depth == self.minDepth:
-            nodo.show()
-            print(nodo)
-            print("ES VICTORIA!!!")
-            input("VICTORY")
 
-        for node in nodo.childs:
-            self.recorridoPreorden(node)
+    # Esta función hace un recorrido en preorden para que se pueda imprimir por consola los resultados
+    def Preorden(self, nodo: Node): 
+        if not self.stop:
+            if self.game.isWin(nodo.rectangle) and nodo.depth == self.minDepth:
+                print("Victoria")
+                nodo.show()
+                self.stop = True
+
+            for node in nodo.childs:
+                self.recorridoPreorden(node)
 
 
 
