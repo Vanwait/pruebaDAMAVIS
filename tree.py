@@ -7,18 +7,22 @@ class Tree:
         self.root = Node([], [(0, 0), (0, 1), (0, 2)], 0, -1)
         self.game = game
         self.maxDepth = maxDepth
+        self.minDepth = -1
         self.creationRecursive(self.root, 1)
-        print(self.root)
+        self.recorridoPreorden(self.root)
         
 
     def creationRecursive(self, node: Node, depth: int):
-        if not self.game.isWin(node.rectangle) and depth <= self.maxDepth:
-            for type in range(5):
-                rectangleM = self.rectangleMove(type, node.rectangle)
-                if rectangleM != -1 and self.goodMove(node.move, type):
-                    child = Node([], rectangleM, depth + 1, type)
-                    self.creationRecursive(child, depth + 1)
-                    node.childs.append(child)
+        if depth <= self.maxDepth: 
+            if not self.game.isWin(node.rectangle):
+                for type in range(5):
+                    rectangleM = self.rectangleMove(type, node.rectangle.copy())
+                    if rectangleM != -1 and self.goodMove(node.move, type):
+                        child = Node([], rectangleM, depth + 1, type)
+                        self.creationRecursive(child, depth + 1)
+                        node.childs.append(child)
+            else:
+                self.minDepth = depth
 
 
     def rectangleMove(self, type: int, rectangle: list):
@@ -66,5 +70,17 @@ class Tree:
         elif oldType == 4 and newType == 4:
             return False
         return True
+    
+    
+    def recorridoPreorden(self, nodo: Node):
+        nodo.show()
+        if self.game.isWin(nodo.rectangle):
+            print("ES VICTORIA!!!")
+            input("VICTORY")
+
+        for node in nodo.childs:
+            self.recorridoPreorden(node)
+
+
 
         
